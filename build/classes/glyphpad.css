@@ -1,0 +1,37 @@
+/*
+ * Empty Stylesheet file.
+ */
+
+.mainFxmlClass {
+  
+}
+
+.text-area {
+    /*-fx-border-color:#F8FFF4;*/
+    -fx-color: #F8FFF4;
+}
+
+#borderpane {
+    -fx-background-color: #D2D6CC;
+}
+
+#textbackground {
+    -fx-background-color: #f8fff4;
+}
+
+#text-area {
+    -fx-text-fill:#f8fff4;    
+}
+
+#text-area .content {
+    -fx-background-color:#474350;
+
+}
+
+#toppane{
+    /*-fx-background-color:#E6EBEO;*/
+}
+
+#bottompane {
+    /*-fx-background-color:#5D576B;*/
+}
