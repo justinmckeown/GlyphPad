@@ -5,6 +5,7 @@
  */
 package glyphpad;
 
+import glyphpad.utilities.unicodeTranslatorUtility;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -14,9 +15,14 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -61,11 +67,12 @@ import oracle.jrockit.jfr.events.ContentTypeImpl;
  */
 public class PredicateLogicPadController implements Initializable {
     @FXML MenuBar menuBar; 
-    @FXML Menu fileMenu, editMenu, accessibilityMenu, helpMenu;
+    @FXML Menu fileMenu, editMenu, mathsEngines, accessibilityMenu, helpMenu;
     @FXML MenuItem open, close, save, saveAs, selectAll, copy, paste, delete, about; 
     @FXML CheckMenuItem dyslexicMode;
     @FXML TextArea textPad;
     @FXML TextArea feedbackText;
+    GlyphStore glyphs;
 
     /**
      * Initializes the controller class.
@@ -73,98 +80,37 @@ public class PredicateLogicPadController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         
-        //menuBar = new MenuBar(fileMenu, editMenu, accessibilityMenu, helpMenu);  
+        //HIDE THEE STUFF i'M DEVELOPING
+        mathsEngines.setVisible(false);
+        feedbackText.setVisible(false);
+        
+        //glyphs = new GlyphStore();
+        Map<String, String> hm;
+        glyphs = new GlyphStore();
+        hm = glyphs.getPredicateLogic();
+        
+        hm.putAll((Map<? extends String, ? extends String>) glyphs.getSetTheory());
         
         textPad.textProperty().addListener(new ChangeListener<String>(){
+            
+            Pattern pattern = Pattern.compile("(?s)\\\\\\w{3,5}", Pattern.CASE_INSENSITIVE);    
             @Override
-            //public void changed(final ObservableValue<? extends String> observable, final String oldValue, final String newValue){
             public void changed(final ObservableValue<? extends String> observable, final String oldValue, final String newValue){
-                System.out.println("OLD VALUE: "+ oldValue);
-                System.out.println("NEW VALUE: "+ newValue);
+                //System.out.println("OLD VALUE: "+ oldValue + "\nNEW VALUE: "+newValue);
                 //System.out.println("OBSERVABLE VALUE: "+ observable);
-
-                //PROPOSITIONAL LOGIC OPERATORS
                 int cp = textPad.caretPositionProperty().get();
-                if(newValue.contains("\\neg")){
-                    replaceSymbol("\\neg", "\u00AC", cp);
-                }
-                 if(newValue.contains("\\con")){
-                     replaceSymbol("\\con", "\u2227", cp);
-                }
-                  if(newValue.contains("\\dis")){
-                     replaceSymbol("\\dis", "\u2228", cp);
-                }
-                   if(newValue.contains("\\inf")){
-                     replaceSymbol("\\inf", "\u21D2", cp);
-                }
-                if(newValue.contains("\\iff")){
-                     replaceSymbol("\\iff", "\u21D4", cp);
+                Matcher matcher = pattern.matcher(newValue);
+                String replacement = null;
+                while(matcher.find()){
+                    replacement = matcher.group();
                 }
                 
-                //Set theory operators
-                if(newValue.contains("\\uni")){
-                     replaceSymbol("\\uni", "\u222A", cp);
-                }
-                if(newValue.contains("\\int")){
-                     replaceSymbol("\\int", "\u2229", cp);
-                }
-                if(newValue.contains("\\diff")){
-                     replaceSymbol("\\diff", "\u22C2", cp);
-                }
-                
-                //Subset operators
-                if(newValue.contains("\\sub")){
-                     replaceSymbol("\\sub", "\u2286", cp);
-                }
-                if(newValue.contains("\\nsub")){
-                     replaceSymbol("\\nsub", "\u2288", cp);
-                }
-                if(newValue.contains("\\psub")){
-                     replaceSymbol("\\psub", "\u2282", cp);
-                }
-                if(newValue.contains("\\npsub")){
-                     replaceSymbol("\\npsub", "\u2284", cp);
-                }
-                
-                //superset operators
-                if(newValue.contains("\\sup")){
-                     replaceSymbol("\\sup", "\u2283", cp);
-                }
-                if(newValue.contains("\\nsup")){
-                     replaceSymbol("\\nsup", "\u2289", cp);
-                }
-                if(newValue.contains("\\psup")){
-                     replaceSymbol("\\psup", "\u2287", cp);
-                }
-                if(newValue.contains("\\npsup")){
-                     replaceSymbol("\\npsup", "\u2285", cp);
-                }
-                
-                //Element operators
-                if(newValue.contains("\\ele")){
-                     replaceSymbol("\\ele", "\u2208", cp);
-                }
-                if(newValue.contains("\\nele")){
-                     replaceSymbol("\\nele", "\u2209", cp);
-                }
-                
-                //Power Set
-                if(newValue.contains("\\Pow")){
-                    replaceSymbol("\\Pow", "\u2119", cp);
-                }
-                
-                //Natural numbers
-                if(newValue.contains("\\Nat")){
-                    replaceSymbol("\\Nat", "\u2115", cp);
-                }
-                //Integers
-                if(newValue.contains("\\Int")){
-                    replaceSymbol("\\Int", "\u2124", cp);
-                }
-                
-                //real numbers
-                if(newValue.contains("\\Rea")){
-                    replaceSymbol("\\Rea", "\u211D", cp);
+                for(Map.Entry<String, String> entry : hm.entrySet()) {
+                    if(entry.getKey().equalsIgnoreCase(replacement)){
+                        replaceSymbol(entry.getKey(), entry.getValue(), cp);
+                    }else if(replacement != null){
+                        System.out.println("NO MATCH FOR: "+replacement);
+                    }
                 }
             }
         });
@@ -266,9 +212,6 @@ public class PredicateLogicPadController implements Initializable {
         }catch(Exception e){
             System.err.println("PredicateLogicPadController().saveSelected(): ERROR saving file: "+e);
         }
-        
-        /*
-        */
     }
     
     @FXML

@@ -80,7 +80,7 @@
                               <MenuItem fx:id="delete" mnemonicParsing="false" onAction="#deleteSelected" text="Delete" />
                         </items>
                       </Menu>
-                        <Menu mnemonicParsing="false" text="Math Engines">
+                        <Menu fx:id="mathsEngines" mnemonicParsing="false" text="Math Engines">
                           <items>
                               <CheckMenuItem mnemonicParsing="false" text="Propositional Logic" />
                               <CheckMenuItem mnemonicParsing="false" text="Set Theory" />
