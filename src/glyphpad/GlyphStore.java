@@ -33,6 +33,7 @@ public class GlyphStore {
         setTheory.put("\\int", "\u2229"); //intersection 
         setTheory.put("\\diff", "\u22C2"); //difference
         setTheory.put("\\sub", "\u2286"); //subset
+        setTheory.put("\\comp", "\u23BA"); //compliement
         setTheory.put("\\nsub", "\u2288"); //nsubset
         setTheory.put("\\psub", "\u2282"); //proper seubset / properly included
         setTheory.put("\\npsub", "\u2284"); //not a proper subset / not properly included
