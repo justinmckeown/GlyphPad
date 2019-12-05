@@ -5,9 +5,11 @@
  */
 package glyphpad;
 
+import glyphpad.utilities.FileUtility;
 import glyphpad.utilities.unicodeTranslatorUtility;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,6 +17,9 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
@@ -56,9 +61,6 @@ import javafx.scene.paint.Paint;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import javafx.util.StringConverter;
-import javax.xml.bind.ParseConversionEvent;
-import oracle.jrockit.jfr.events.ContentTypeImpl;
 
 /**
  * FXML Controller class
@@ -68,12 +70,17 @@ import oracle.jrockit.jfr.events.ContentTypeImpl;
 public class PredicateLogicPadController implements Initializable {
     @FXML MenuBar menuBar; 
     @FXML Menu fileMenu, editMenu, mathsEngines, accessibilityMenu, helpMenu;
-    @FXML MenuItem open, close, save, saveAs, selectAll, copy, paste, delete, about; 
+    @FXML MenuItem open, close, save, saveAs, selectAll, copy, paste, delete, about, userGuide; 
     @FXML CheckMenuItem dyslexicMode;
     @FXML TextArea textPad;
     @FXML TextArea feedbackText;
     GlyphStore glyphs;
 
+    private static int fileHash; 
+    private static String fileName;
+    private static String filePath;
+    private static String lastDirectory;
+    
     /**
      * Initializes the controller class.
      */
@@ -83,6 +90,12 @@ public class PredicateLogicPadController implements Initializable {
         //HIDE THEE STUFF i'M DEVELOPING
         mathsEngines.setVisible(false);
         feedbackText.setVisible(false);
+        
+        //Get the filehas ofthe initial file when its opened. This will be used tocheck for change sin the state of the file prior to it neing closed. 
+        fileHash = textPad.getText().hashCode();
+        fileName = null;
+        filePath = null;
+        lastDirectory = null;
         
         //glyphs = new GlyphStore();
         Map<String, String> hm;
@@ -125,15 +138,21 @@ public class PredicateLogicPadController implements Initializable {
                         textPad.positionCaret(cp);
                     });          
         }
+    
  
     @FXML
     private void openSelected(ActionEvent ev) {
         //System.out.println("open button pressed");
         Stage theStage = (Stage) menuBar.getScene().getWindow();
         FileChooser fileChooser = new FileChooser();
-        //fileChooser.setInitialDirectory(new File("Documents"));
         fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Text Files", "*.txt"));
+                new FileChooser.ExtensionFilter("Text Files", "*.txt"),
+                new FileChooser.ExtensionFilter("All Files", "*.*"));
+        
+        if(lastDirectory != null){
+            System.out.println("FILE PATH"+getFilePath());
+            fileChooser.setInitialDirectory(new File(getLastDirectory()));
+        }
         File selectedFile = fileChooser.showOpenDialog(theStage);
 
         if (selectedFile == null) {
@@ -145,6 +164,7 @@ public class PredicateLogicPadController implements Initializable {
                 a = new Alert(Alert.AlertType.ERROR, "This file format cannot be opened with this application", ButtonType.OK);
                 a.showAndWait();
             } else {
+                
                 StringBuffer finalText = new StringBuffer("");
                 try (BufferedReader reader = new BufferedReader(new FileReader(selectedFile))) {
 
@@ -166,9 +186,14 @@ public class PredicateLogicPadController implements Initializable {
 
                 }
                 PredicateLogicPadController pc = loader.getController();
-                pc.setTextPadOnLoad(finalText.toString());
+                try {
+                    pc.setTextPadOnLoad(finalText.toString(), selectedFile.getCanonicalPath()); //add in the file path and file name
+                    System.out.println("Canonical Path: "+selectedFile.getCanonicalPath());
+                } catch (IOException ex) {
+                    Logger.getLogger(PredicateLogicPadController.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 Parent p = loader.getRoot();
-                p.getStylesheets().add("mathpad.styles/mathpad.css");
+                p.getStylesheets().add("glyphpad/styles/glyphpad.css");
                 Stage stage = new Stage();
                 stage.setTitle(selectedFile.getName());
                 stage.setScene(new Scene(p));
@@ -183,40 +208,91 @@ public class PredicateLogicPadController implements Initializable {
         Stage theStage = (Stage) menuBar.getScene().getWindow();
         
         //do a check to see if the file has changed since last save...
+        System.out.println("SavedHash: "+getFileHash());
+        System.out.println("CurrentHash: "+ textPad.getText().hashCode());
         
-        //if it has not been saved then ask the user if they want to save before closing...
-        
-        //then close the file
-        theStage.close();
+        if(getFileHash()==textPad.getText().hashCode()){
+            System.out.println("Saving is fine");
+            theStage.close();
+        }else{
+            System.out.println("Saving is not fine");
+            Alert a = new Alert(Alert.AlertType.WARNING, "The file has changed since your last Save. Are you sure you want to close without Saving?", ButtonType.OK, ButtonType.CANCEL);
+            a.showAndWait();
+            
+            //if user selected ok close the stage. 
+            if (a.getResult() == ButtonType.OK){
+                theStage.close();
+            }
+        }
     }
     
     @FXML
     private void saveSelected(ActionEvent ev){
         System.out.println("save button pressed");
-  
-        String fileToSave = textPad.getText();
         
-        Stage theStage = (Stage) menuBar.getScene().getWindow();
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("save File in .txt format");
-        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("TXT files (*.txt)", ".txt");
-        fileChooser.getExtensionFilters().add(filter);
-        Window stage = null;
-        File file = fileChooser.showSaveDialog(stage);
-        
+        if(fileName == null){
+            //save the file with a dialog box
+            boolean filesaved = saveAs();
+        }else {
+            //just save the file to the save filepath. 
+            File file = new File(getFilePath());
+            boolean saveSuccessful = false;
         try{
             PrintWriter writer;
             writer = new PrintWriter(file);
-            writer.println(fileToSave);
+            writer.println(textPad.getText());
             writer.close();
+            saveSuccessful = true;
+            setFileHash(textPad.getText().hashCode());
         }catch(Exception e){
             System.err.println("PredicateLogicPadController().saveSelected(): ERROR saving file: "+e);
+        }
         }
     }
     
     @FXML
     private void saveAsSelected(ActionEvent ev){
         System.out.println("saveAs button pressed");
+        boolean saved = saveAs();
+    }
+    
+    private boolean saveAs(){
+        
+        String fileToSave = textPad.getText();
+        Stage theStage = (Stage) menuBar.getScene().getWindow();
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("save File in .txt format");
+        
+        FileChooser.ExtensionFilter text = new FileChooser.ExtensionFilter("TXT files", "*.txt");
+        FileChooser.ExtensionFilter everything = new FileChooser.ExtensionFilter("All files", "*.*");
+        fileChooser.getExtensionFilters().addAll(text, everything);
+        
+        if(lastDirectory != null){
+            //TODO: For some reason saying if 'not null' was thorwing an error. Figure out why
+            fileChooser.setInitialDirectory(new File(getLastDirectory()));
+        }
+        
+        Window stage = null;
+        File file = fileChooser.showSaveDialog(stage);
+        boolean saveSuccessful = false;
+        try{
+            PrintWriter writer;
+            writer = new PrintWriter(file);
+            writer.println(fileToSave);
+            writer.close();
+            saveSuccessful = true;
+        }catch(Exception e){
+            System.err.println("PredicateLogicPadController().saveSelected(): ERROR saving file: "+e);
+        }
+        if(saveSuccessful){
+            theStage.setTitle(file.getName());
+            setFileName(file.getName());
+            setFilePath(file.getAbsolutePath());
+            System.out.println("glyphpad.PredicateLogicPadController.saveTheFile() The cannonical file path: "+ getFilePath());
+        }
+        setFileHash(textPad.getText().hashCode());
+        setLastDirectory(FileUtility.getDirectoryFromPath(getFilePath()));
+        return saveSuccessful;
     }
     
     
@@ -279,11 +355,110 @@ public class PredicateLogicPadController implements Initializable {
     
     @FXML
     private void aboutSelected(ActionEvent ev){
-        System.out.println("dyslexicMode button pressed");
+        System.out.println("about button pressed");
+         FXMLLoader loader = new FXMLLoader();
+                loader.setLocation(getClass().getResource("About.fxml"));
+                try {
+                    loader.load();
+                } catch (IOException ex) {
+                    System.err.println("PredicateLogicPadController.aboutpSelected() ERROR: "+ex);
+
+                }
+                AboutController hv = loader.getController();
+                Parent p = loader.getRoot();
+                p.getStylesheets().add("glyphpad/styles/glyphpad.css");
+                Stage stage = new Stage();
+                stage.setTitle("About GlyphPad Beta version: 0.0.0.1");
+                stage.setScene(new Scene(p));
+                stage.showAndWait();
     }
     
+    @FXML
+    private void userGuideSelected(ActionEvent ev){
+                
+                FXMLLoader loader = new FXMLLoader();
+                loader.setLocation(getClass().getResource("HelpView.fxml"));
+                try {
+                    loader.load();
+                } catch (IOException ex) {
+                    System.err.println("PredicateLogicPadController.helpSelected() ERROR: "+ex);
+
+                }
+                HelpViewController hv = loader.getController();
+                Parent p = loader.getRoot();
+                p.getStylesheets().add("glyphpad/styles/glyphpad.css");
+                Stage stage = new Stage();
+                stage.setTitle("GlyphPad Help");
+                stage.setScene(new Scene(p));
+                stage.showAndWait();
+            }
+        
     
-    public void setTextPadOnLoad(String s){
+    public void setTextPadOnLoad(String s, String path){
         textPad.setText(s);
+        setFileName(s);
+        setFilePath(path);
+        setLastDirectory(FileUtility.getDirectoryFromPath(path));
+        setFileHash(textPad.getText().hashCode());
+        //REPORT:
+        System.out.println("FILE NAME: "+ getFileName());
+        System.out.println("PATH: "+ getFilePath());
+        System.out.println("DIRECTORY: "+ getLastDirectory());
+        System.out.println("HASH: "+ getFileHash());
     }
+    
+       private String hashOfText(String s){
+        MessageDigest m;
+        StringBuilder hash = new StringBuilder();
+        String finalHash = null;
+        try {
+            m = MessageDigest.getInstance("MD5");
+            byte[] hashbytes = m.digest(s.getBytes(StandardCharsets.UTF_8));
+            for(byte b: hashbytes){
+                hash.append(String.format("", b));
+            }
+            finalHash = hash.toString();
+            
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(PredicateLogicPadController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        System.out.println("PreciateLogicPadController.hashOfText(): "+ finalHash);
+        return finalHash;
+    }
+ 
+
+       //////////////////////////////////////////////////////////////////// GETTERS AND SETTERS //////////////////////////////////////////////////////////////////
+    public static int getFileHash() {
+        return fileHash;
+    }
+
+    public static void setFileHash(int fileHash) {
+        PredicateLogicPadController.fileHash = fileHash;
+    }
+
+    public static String getFileName() {
+        return fileName;
+    }
+
+    public static void setFileName(String fileName) {
+        PredicateLogicPadController.fileName = fileName;
+    }
+
+    public static String getFilePath() {
+        return filePath;
+    }
+
+    public static void setFilePath(String filePath) {
+        PredicateLogicPadController.filePath = filePath;
+    }
+
+    public static String getLastDirectory() {
+        return lastDirectory;
+    }
+
+    public static void setLastDirectory(String lastDirectory) {
+        PredicateLogicPadController.lastDirectory = lastDirectory;
+    }
+    
+    
 }

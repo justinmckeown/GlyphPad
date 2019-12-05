@@ -11,6 +11,14 @@
     -fx-color: #F8FFF4;
 }
 
+.scrollPane {
+    -fx-background:#ffffff;
+}
+
+#textwhite {
+    -fx-background-color:#ffffff;
+}
+
 #borderpane {
     -fx-background-color: #D2D6CC;
 }

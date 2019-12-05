@@ -94,6 +94,7 @@
                       <Menu fx:id="helpMenu" mnemonicParsing="false" text="Help">
                         <items>
                           <MenuItem fx:id="about" mnemonicParsing="false" onAction="#aboutSelected" text="About" />
+                              <MenuItem fx:id="userGuide" mnemonicParsing="false" onAction="#userGuideSelected" text="User Guide" />
                         </items>
                       </Menu>
                     </menus>
