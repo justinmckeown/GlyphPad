@@ -6,22 +6,13 @@
 package glyphpad;
 
 import glyphpad.utilities.FileUtility;
-import glyphpad.utilities.unicodeTranslatorUtility;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Dictionary;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -32,24 +23,20 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
-import javafx.scene.Cursor;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.IndexRange;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
+import javafx.scene.image.Image;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.Background;
@@ -70,7 +57,7 @@ import javafx.stage.Window;
 public class PredicateLogicPadController implements Initializable {
     @FXML MenuBar menuBar; 
     @FXML Menu fileMenu, editMenu, mathsEngines, accessibilityMenu, helpMenu;
-    @FXML MenuItem open, close, save, saveAs, selectAll, copy, paste, delete, about, userGuide; 
+    @FXML MenuItem newPad, open, close, save, saveAs, selectAll, copy, paste, delete, about, userGuide; 
     @FXML CheckMenuItem dyslexicMode;
     @FXML TextArea textPad;
     @FXML TextArea feedbackText;
@@ -138,6 +125,14 @@ public class PredicateLogicPadController implements Initializable {
                         textPad.positionCaret(cp);
                     });          
         }
+    
+    @FXML
+    private void newGlyphPad(ActionEvent ev){
+        System.out.println("New Button pressed");
+        loadNewView("PredicateLogicPad.fxml", "GlyphPad");
+        
+        
+    }
     
  
     @FXML
@@ -347,7 +342,7 @@ public class PredicateLogicPadController implements Initializable {
         System.out.println("dyslexicMode button pressed");
         Region region = (Region) textPad.lookup(".content");
         if (dyslexicMode.isSelected()) {
-            region.setBackground(new Background(new BackgroundFill(Paint.valueOf("#B5B2BB"), CornerRadii.EMPTY, Insets.EMPTY)));
+            region.setBackground(new Background(new BackgroundFill(Paint.valueOf("#f6f5f1"), CornerRadii.EMPTY, Insets.EMPTY)));
         } else {
             region.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
         }
@@ -355,6 +350,11 @@ public class PredicateLogicPadController implements Initializable {
     
     @FXML
     private void aboutSelected(ActionEvent ev){
+        
+        loadNewView("About.fxml", "About GlyphPad Beta");
+        
+        /*
+        
         System.out.println("about button pressed");
          FXMLLoader loader = new FXMLLoader();
                 loader.setLocation(getClass().getResource("About.fxml"));
@@ -368,14 +368,21 @@ public class PredicateLogicPadController implements Initializable {
                 Parent p = loader.getRoot();
                 p.getStylesheets().add("glyphpad/styles/glyphpad.css");
                 Stage stage = new Stage();
-                stage.setTitle("About GlyphPad Beta version: 0.0.0.1");
+                stage.getIcons().add(new Image(("glyphpad/icons/Logo400.png")));
+                stage.setTitle("About GlyphPad Beta");
                 stage.setScene(new Scene(p));
                 stage.showAndWait();
+        */
     }
     
     @FXML
     private void userGuideSelected(ActionEvent ev){
-                
+        
+        loadNewView("HelpView.fxml", "GlyphPad Help");
+        
+        
+        /*
+        
                 FXMLLoader loader = new FXMLLoader();
                 loader.setLocation(getClass().getResource("HelpView.fxml"));
                 try {
@@ -388,10 +395,40 @@ public class PredicateLogicPadController implements Initializable {
                 Parent p = loader.getRoot();
                 p.getStylesheets().add("glyphpad/styles/glyphpad.css");
                 Stage stage = new Stage();
+                stage.getIcons().add(new Image(("glyphpad/icons/Logo400.png")));
                 stage.setTitle("GlyphPad Help");
                 stage.setScene(new Scene(p));
                 stage.showAndWait();
+        */
             }
+    
+    
+    private void loadNewView(String fxml, String title){
+        
+         try {
+         ClassLoader cl = ClassLoader.getSystemClassLoader();
+
+        URL[] urls = ((URLClassLoader)cl).getURLs();
+
+        for(URL url: urls){
+        	System.out.println("url is " + url.getFile());
+        }  
+            Parent root = FXMLLoader.load(getClass().getResource(fxml));
+            Scene scene = new Scene(root);
+            root.getStylesheets().add("glyphpad/styles/glyphpad.css");
+            Stage stage = new Stage();
+            stage.setTitle(title);
+            stage.setScene(scene);
+            //stage.getIcons().add(new Image(this.getClass().getResourceAsStream("glyphpad/icons/Logo400.png")));
+            stage.getIcons().add(new Image(("glyphpad/icons/Logo400.png")));
+            stage.show();
+            
+        } catch (IOException ex) {
+            Logger.getLogger(PredicateLogicPadController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
+    }
         
     
     public void setTextPadOnLoad(String s, String path){
@@ -406,25 +443,7 @@ public class PredicateLogicPadController implements Initializable {
         System.out.println("DIRECTORY: "+ getLastDirectory());
         System.out.println("HASH: "+ getFileHash());
     }
-    
-       private String hashOfText(String s){
-        MessageDigest m;
-        StringBuilder hash = new StringBuilder();
-        String finalHash = null;
-        try {
-            m = MessageDigest.getInstance("MD5");
-            byte[] hashbytes = m.digest(s.getBytes(StandardCharsets.UTF_8));
-            for(byte b: hashbytes){
-                hash.append(String.format("", b));
-            }
-            finalHash = hash.toString();
-            
-        } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(PredicateLogicPadController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        System.out.println("PreciateLogicPadController.hashOfText(): "+ finalHash);
-        return finalHash;
-    }
+
  
 
        //////////////////////////////////////////////////////////////////// GETTERS AND SETTERS //////////////////////////////////////////////////////////////////

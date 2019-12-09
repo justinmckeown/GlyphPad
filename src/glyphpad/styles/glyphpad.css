@@ -12,12 +12,27 @@
 }
 
 .scrollPane {
-    -fx-background:#ffffff;
+/*    -fx-background:#ffffff;*/
+    -fx-background:#f6f5f1;
 }
 
 #textwhite {
     -fx-background-color:#ffffff;
 }
+
+#helptext .content{
+    -fx-background-color:#f6f5f1;
+}
+
+#abouttext:focused {
+    -fx-border-color: #D2D6CC;
+}
+
+#abouttext .content{
+    -fx-background-color:#D2D6CC;
+    /*-fx-border-color: #D2D6CC;*/
+}
+
 
 #borderpane {
     -fx-background-color: #D2D6CC;

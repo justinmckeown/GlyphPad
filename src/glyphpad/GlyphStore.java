@@ -24,9 +24,13 @@ public class GlyphStore {
         predicateLogic = new HashMap<>();
         predicateLogic.put("\\neg", "\u00AC"); //negation
         predicateLogic.put("\\con", "\u2227"); //conjoined
+        predicateLogic.put("\\and", "\u2227"); //conjoined
         predicateLogic.put("\\dis", "\u2228"); //disjoined
-        predicateLogic.put("\\inf", "\u21D2"); //infers
+        predicateLogic.put("\\orr", "\u2228"); //disjoined
+        predicateLogic.put("\\imp", "\u21D2"); //infers
         predicateLogic.put("\\iff", "\u21D4"); //iff and only iff
+        predicateLogic.put("\\line", "\u23af"); //iff and only iff
+        
         
         setTheory = new Hashtable();
         setTheory.put("\\uni", "\u222A"); //union

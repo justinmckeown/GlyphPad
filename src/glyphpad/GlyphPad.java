@@ -41,9 +41,9 @@ public class GlyphPad extends Application {
             Scene scene = new Scene(root);
             root.getStylesheets().add("glyphpad/styles/glyphpad.css");
             Stage stage = new Stage();
+            stage.getIcons().add(new Image(("glyphpad/icons/Logo400.png")));
             stage.setTitle("Glyph Pad");
             stage.setScene(scene);
-            //stage.getIcons().add(new Image(this.getClass().getResourceAsStream("icons/icon.png")));
             stage.show();
 
         } catch (IOException ex) {

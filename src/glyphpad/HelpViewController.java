@@ -47,11 +47,11 @@ public class HelpViewController implements Initializable {
         
         formatText(helpText);
         
+        double edgeBuffer = 20;
         scrollPane.widthProperty().addListener(new ChangeListener<Number>(){
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                //textFlow.setPrefWidth(oldValue.doubleValue());
-                textFlow.setMaxWidth(newValue.doubleValue());
+                textFlow.setMaxWidth((newValue.doubleValue()-edgeBuffer));
                 //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
             
@@ -63,16 +63,31 @@ public class HelpViewController implements Initializable {
     
     private void formatText(LinkedHashMap<String, String> m) {
 
-        Text introduction = new Text("welcome to the help view. Below is a list of all the symbols currently supported by glphPad and the short codes used to create them while typing.\n");
-        introduction.setFont(Font.font("Calibri", FontWeight.BOLD, 70));
-        textFlow.getChildren().add(introduction);
+        
+        Text intro = new Text("Overview: The basics of using GlyphPad.\n");
+        intro.setFont(Font.font("Calibri", FontWeight.BOLD, 26));
+        
+        Text introBlurb = new Text("GlyphPad is designed to make writing propositional logic and basic set theory formulas much easier. "
+                + "It achieves this thorugh the use of inutivitive three to four character shortcodes prefixed with a '\\'. "
+                + "The three letters for each short code is derived from the first three letters of the word formally used for the given symbol. "
+                + "For exmaple, the shortcode for the negation symbol is '\\neg'. If the user types this then the shortcode will be transformed into the negation symbol '¬'"
+                + "\n\n"
+                + "The full list of symbols currently included in GlyphPad are listed below along with their shortcodes. It is advised you take a moment to read these as it will "
+                + "help you use the app. Under each symbol the related laws of propositional logic have also been listed for convenience.\n\n");
+        introBlurb.setFont(Font.font("Calibri", FontWeight.MEDIUM, 24));
+                
+        Text propHeading = new Text("1.Propositional Logic: short codes and Laws:\n");
+        propHeading.setFont(Font.font("Calibri", FontWeight.BOLD, 30));
+        
+        textFlow.getChildren().addAll(intro, introBlurb, propHeading);
+        
         for (Map.Entry<String, String> entry : m.entrySet()) {
 
             Text title = new Text(entry.getKey() + "\n");
-            title.setFont(Font.font("Calibri", FontWeight.EXTRA_BOLD, 100));
+            title.setFont(Font.font("Calibri", FontWeight.BOLD, 26));
 
-            Text blurb = new Text(entry.getValue() + "\n");
-            title.setFont(Font.font("Calibri", FontWeight.MEDIUM, 70));
+            Text blurb = new Text(entry.getValue() + "\n\n");
+            blurb.setFont(Font.font("Calibri", FontWeight.MEDIUM, 24));
             textFlow.getChildren().addAll(title, blurb);
             //title = entry.getKey();
             //blurb = entry.getValue();
