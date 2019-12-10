@@ -40,28 +40,28 @@ public class HelpViewController implements Initializable {
         
         textFlow.setMaxWidth(800);
 
-        LinkedHashMap<String, String> helpText;
+        LinkedHashMap<String, String> propositionalLogicText;
+        LinkedHashMap<String, String> setTheoryText;
 
         helpTextStore = new HelpTextStore();
-        helpText = helpTextStore.getHelpText();
+        propositionalLogicText = helpTextStore.getHelpText();
+        setTheoryText = helpTextStore.getSetTheoryTextHelp();
         
-        formatText(helpText);
+        
+        formatText(propositionalLogicText, setTheoryText);
         
         double edgeBuffer = 20;
         scrollPane.widthProperty().addListener(new ChangeListener<Number>(){
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
                 textFlow.setMaxWidth((newValue.doubleValue()-edgeBuffer));
-                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
             
         });
         
-        //make it so that the textFlow warps to the size of the scroll-pane and when scrollpane changes size, textpane warps too.
-        
     }    
     
-    private void formatText(LinkedHashMap<String, String> m) {
+    private void formatText(LinkedHashMap<String, String> propositionalLogic, LinkedHashMap<String, String> setTheory)  {
 
         
         Text intro = new Text("Overview: The basics of using GlyphPad.\n");
@@ -81,7 +81,7 @@ public class HelpViewController implements Initializable {
         
         textFlow.getChildren().addAll(intro, introBlurb, propHeading);
         
-        for (Map.Entry<String, String> entry : m.entrySet()) {
+        for (Map.Entry<String, String> entry : propositionalLogic.entrySet()) {
 
             Text title = new Text(entry.getKey() + "\n");
             title.setFont(Font.font("Calibri", FontWeight.BOLD, 26));
@@ -89,9 +89,19 @@ public class HelpViewController implements Initializable {
             Text blurb = new Text(entry.getValue() + "\n\n");
             blurb.setFont(Font.font("Calibri", FontWeight.MEDIUM, 24));
             textFlow.getChildren().addAll(title, blurb);
-            //title = entry.getKey();
-            //blurb = entry.getValue();
-            //finalText += (title+"\n"+blurb+"\n");
+        }
+        
+        Text setHeading = new Text("2. Set Theory: Short codes and Laws:\n\n");
+        setHeading.setFont(Font.font("Calibri", FontWeight.BOLD, 30));
+        textFlow.getChildren().add(setHeading);
+        
+        for(Map.Entry<String, String> entry : setTheory.entrySet()) {
+            Text title = new Text(entry.getKey() + "\n");
+            title.setFont(Font.font("Calibri", FontWeight.BOLD, 26));
+
+            Text blurb = new Text(entry.getValue() + "\n\n");
+            blurb.setFont(Font.font("Calibri", FontWeight.MEDIUM, 24));
+            textFlow.getChildren().addAll(title, blurb);
         }
 
     }
