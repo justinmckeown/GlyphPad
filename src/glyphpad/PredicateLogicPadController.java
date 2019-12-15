@@ -90,8 +90,17 @@ public class PredicateLogicPadController implements Initializable {
         Map<String, String> hm;
         glyphs = new GlyphStore();
         hm = glyphs.getPredicateLogic();
-        
         hm.putAll((Map<? extends String, ? extends String>) glyphs.getSetTheory());
+        
+        
+        //Subscripts collections...
+        Map<String, String> subscriptMaps;
+        subscriptMaps = glyphs.getSubscripts();
+        
+        //Superscripts collections...
+        Map<String, String> superscriptMaps;
+        subscriptMaps = glyphs.getSuperscripts();
+        
         
         textPad.textProperty().addListener(new ChangeListener<String>(){
             
@@ -120,6 +129,8 @@ public class PredicateLogicPadController implements Initializable {
                 
                 if(replacement != null){
                     replacement = replacement.trim();
+                    
+                    //If its a glyph...
                     if(replacement.matches(pattern.pattern())){
                         System.out.println("replacement: '"+ replacement+"' matches a given pattern: ");
                         for(Map.Entry<String, String> entry : hm.entrySet()) {
@@ -129,9 +140,25 @@ public class PredicateLogicPadController implements Initializable {
                                 replacement = null;
                             }
                         }
-                    }else if(replacement.matches(subcase.pattern())){
+                    }
+                    //If its a subscript...
+                    else if(replacement.matches(subcase.pattern())){
                         System.out.println("replacement Matches substring regex");
-                        replaceWithSubscript(replacement, cp);
+                        //TODO: you need to check if the charcters are valid for replacement....
+                        
+                        System.out.println("replaceWithSubscript Recieved String: "+ replacement);
+                        String s = replacement.replaceAll("_", "");
+                        String cleanedString = s.replace("\\", "");
+                        System.out.println("replaceWithSubscript Cleaned String: "+ cleanedString);
+                        
+                        StringBuffer str = new StringBuffer("");
+                        for(Map.Entry<String, String> entry : subscriptMaps.entrySet()){
+                            if(replacement.contains(entry.getKey())){
+                                str.append(entry.getValue());
+                            }
+                            System.out.println("CHAR SEQUENCE: "+str.toString());
+                        }
+                        replaceWithSubscript(replacement, str.toString(), cp);
                         replacement = null;
                     }else{
                         replacement = null;
@@ -152,39 +179,20 @@ public class PredicateLogicPadController implements Initializable {
         }
     
     
-    private void replaceWithSubscript(String inputString, int crt){
-        System.out.println("replaceWithSubscript Recieved String: "+ inputString+ "and Cret position: "+crt);
-        String s = inputString.replaceAll("_", "");
-        String cleanedString = s.replace("\\", "");
-        System.out.println("replaceWithSubscript Cleaned String: "+ cleanedString);
-                
-        Platform.runLater( ()->{ 
-            //TODO: send the cleaned string to a function which iterates through it one letter at a tiem and then returns the appropriate unicode sequence
-            //The unicode sequence is then inserted into the app. 
+    //TODO: CHECK IF THIS IS THIS NECESSARY? YOU COULD JUST USE THE ABOVE
+    private void replaceWithSubscript(String replacementSequence, String inputString, int crt){        
+        Platform.runLater( ()->{
             String txt = textPad.getText();
-            textPad.setText(txt.replace(inputString, ("\u00B2"+"\u207D")));
+            textPad.setText(txt.replace(replacementSequence, inputString));
             textPad.positionCaret(crt-2);
         });
-        
-        
-        
-        /*
-            TextFlow container = new TextFlow();
-            Text normal = new Text("Normal");
-            Text sup = new Text("sup");
-            Text sub = new Text("sub");
-            sup.setTranslateY(normal.getFont().getSize() * -0.3);
-            sub.setTranslateY(normal.getFont().getSize() * 0.3);
-            container.getChildren().addAll(normal, sup, sub);
-            */
     }
+    
     
     @FXML
     private void newGlyphPad(ActionEvent ev){
         System.out.println("New Button pressed");
         loadNewView("PredicateLogicPad.fxml", "GlyphPad");
-        
-        
     }
     
  

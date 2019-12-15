@@ -127,6 +127,14 @@ public class GlyphStore {
         this.setTheory = setTheory;
     }
 
+    public Map<String, String> getSuperscripts() {
+        return superscripts;
+    }
+
+    public Map<String, String> getSubscripts() {
+        return subscripts;
+    }
+
    
     
     
