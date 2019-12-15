@@ -32,6 +32,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.IndexRange;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -45,6 +46,7 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -78,7 +80,7 @@ public class PredicateLogicPadController implements Initializable {
         mathsEngines.setVisible(false);
         feedbackText.setVisible(false);
         
-        //Get the filehas ofthe initial file when its opened. This will be used tocheck for change sin the state of the file prior to it neing closed. 
+        //Get the file hash of the initial file when its opened. This will be used to check for change sin the state of the file prior to it neing closed. 
         fileHash = textPad.getText().hashCode();
         fileName = null;
         filePath = null;
@@ -93,7 +95,10 @@ public class PredicateLogicPadController implements Initializable {
         
         textPad.textProperty().addListener(new ChangeListener<String>(){
             
-            Pattern pattern = Pattern.compile("(?s)\\\\\\w{3,5}", Pattern.CASE_INSENSITIVE);    
+            Pattern pattern = Pattern.compile("(?s)\\\\[[^_]&&a-zA-Z]{3,5}", Pattern.CASE_INSENSITIVE);    
+            Pattern subcase = Pattern.compile("(?s)\\\\_[a-zA-Z0-9]{0,}_", Pattern.CASE_INSENSITIVE);
+            Pattern supercase = Pattern.compile("", Pattern.CASE_INSENSITIVE);
+            
             @Override
             public void changed(final ObservableValue<? extends String> observable, final String oldValue, final String newValue){
                 //System.out.println("OLD VALUE: "+ oldValue + "\nNEW VALUE: "+newValue);
@@ -102,14 +107,34 @@ public class PredicateLogicPadController implements Initializable {
                 Matcher matcher = pattern.matcher(newValue);
                 String replacement = null;
                 while(matcher.find()){
+                    System.out.println("Searching for glyph match ");
                     replacement = matcher.group();
                 }
+                //find a substring
+                Matcher matchSubrscript = subcase.matcher(newValue);
+                while(matchSubrscript.find()){
+                    System.out.println("Searching for Subscript match");
+                    replacement = matchSubrscript.group();
+                }
                 
-                for(Map.Entry<String, String> entry : hm.entrySet()) {
-                    if(entry.getKey().equalsIgnoreCase(replacement)){
-                        replaceSymbol(entry.getKey(), entry.getValue(), cp);
-                    }else if(replacement != null){
-                        System.out.println("NO MATCH FOR: "+replacement);
+                
+                if(replacement != null){
+                    replacement = replacement.trim();
+                    if(replacement.matches(pattern.pattern())){
+                        System.out.println("replacement: '"+ replacement+"' matches a given pattern: ");
+                        for(Map.Entry<String, String> entry : hm.entrySet()) {
+                                System.out.println("COMPARE LOOP. REPLACEMENT: '"+ replacement+"' HM.ENTRY: "+entry.getKey());
+                            if(entry.getKey().equalsIgnoreCase(replacement)){
+                                replaceSymbol(entry.getKey(), entry.getValue(), cp);
+                                replacement = null;
+                            }
+                        }
+                    }else if(replacement.matches(subcase.pattern())){
+                        System.out.println("replacement Matches substring regex");
+                        replaceWithSubscript(replacement, cp);
+                        replacement = null;
+                    }else{
+                        replacement = null;
                     }
                 }
             }
@@ -125,6 +150,34 @@ public class PredicateLogicPadController implements Initializable {
                         textPad.positionCaret(cp);
                     });          
         }
+    
+    
+    private void replaceWithSubscript(String inputString, int crt){
+        System.out.println("replaceWithSubscript Recieved String: "+ inputString+ "and Cret position: "+crt);
+        String s = inputString.replaceAll("_", "");
+        String cleanedString = s.replace("\\", "");
+        System.out.println("replaceWithSubscript Cleaned String: "+ cleanedString);
+                
+        Platform.runLater( ()->{ 
+            //TODO: send the cleaned string to a function which iterates through it one letter at a tiem and then returns the appropriate unicode sequence
+            //The unicode sequence is then inserted into the app. 
+            String txt = textPad.getText();
+            textPad.setText(txt.replace(inputString, ("\u00B2"+"\u207D")));
+            textPad.positionCaret(crt-2);
+        });
+        
+        
+        
+        /*
+            TextFlow container = new TextFlow();
+            Text normal = new Text("Normal");
+            Text sup = new Text("sup");
+            Text sub = new Text("sub");
+            sup.setTranslateY(normal.getFont().getSize() * -0.3);
+            sub.setTranslateY(normal.getFont().getSize() * 0.3);
+            container.getChildren().addAll(normal, sup, sub);
+            */
+    }
     
     @FXML
     private void newGlyphPad(ActionEvent ev){
