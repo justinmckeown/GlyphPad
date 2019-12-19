@@ -42,6 +42,7 @@ public class GlyphStore {
         setTheory.put("\\comp", "\u23BA"); //compliement
         setTheory.put("\\nsub", "\u2288"); //nsubset
         setTheory.put("\\psub", "\u2282"); //proper seubset / properly included
+        setTheory.put("\\prop", "\u2282"); //proper subset or properly included
         setTheory.put("\\npsub", "\u2284"); //not a proper subset / not properly included
         setTheory.put("\\sup", "\u2283");//superset
         setTheory.put("\\nsup", "\u2289"); //not superset
@@ -61,9 +62,9 @@ public class GlyphStore {
         
         superscripts = new HashMap<>();
         superscripts.put("0", "\u2070");
-        superscripts.put("1", "\u20B9");
-        superscripts.put("2", "\u20B2");
-        superscripts.put("3", "\u20B3");
+        superscripts.put("1", "\u00B9");
+        superscripts.put("2", "\u00B2");
+        superscripts.put("3", "\u00B3");
         superscripts.put("4", "\u2074");
         superscripts.put("5", "\u2075");
         superscripts.put("6", "\u2076");

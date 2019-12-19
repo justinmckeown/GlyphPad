@@ -6,6 +6,7 @@
 package glyphpad;
 
 import glyphpad.utilities.FileUtility;
+import glyphpad.utilities.InputTests;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -76,7 +77,7 @@ public class PredicateLogicPadController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         
-        //HIDE THEE STUFF i'M DEVELOPING
+        //HIDE THEE STUFF I'M CURRENTLY DEVELOPING...
         mathsEngines.setVisible(false);
         feedbackText.setVisible(false);
         
@@ -99,42 +100,47 @@ public class PredicateLogicPadController implements Initializable {
         
         //Superscripts collections...
         Map<String, String> superscriptMaps;
-        subscriptMaps = glyphs.getSuperscripts();
-        
+        superscriptMaps = glyphs.getSuperscripts();
         
         textPad.textProperty().addListener(new ChangeListener<String>(){
             
-            Pattern pattern = Pattern.compile("(?s)\\\\[[^_]&&a-zA-Z]{3,5}", Pattern.CASE_INSENSITIVE);    
-            Pattern subcase = Pattern.compile("(?s)\\\\_[a-zA-Z0-9]{0,}_", Pattern.CASE_INSENSITIVE);
-            Pattern supercase = Pattern.compile("", Pattern.CASE_INSENSITIVE);
+            Pattern pattern = Pattern.compile("(?s)\\\\[[^_]&&a-zA-Z]{3,5}", Pattern.CASE_INSENSITIVE); //TODO: should this be case sensitive?    
+            Pattern subcase = Pattern.compile("(?s)\\\\_[a-zA-Z0-9\\+\\-\\=\\(\\)]{0,}_", Pattern.CASE_INSENSITIVE); //TODO: should this be case sensitive?    +-=()
+            Pattern supercase = Pattern.compile("(?s)\\\\\\^[a-zA-Z0-9\\+\\-\\=\\(\\)]{0,}\\^", Pattern.CASE_INSENSITIVE); //TODO: should this be case sensitive?    
             
             @Override
             public void changed(final ObservableValue<? extends String> observable, final String oldValue, final String newValue){
-                //System.out.println("OLD VALUE: "+ oldValue + "\nNEW VALUE: "+newValue);
-                //System.out.println("OBSERVABLE VALUE: "+ observable);
                 int cp = textPad.caretPositionProperty().get();
-                Matcher matcher = pattern.matcher(newValue);
+                
                 String replacement = null;
+                
+                //find a glyph (set theory or propositional logic)
+                Matcher matcher = pattern.matcher(newValue);
                 while(matcher.find()){
                     System.out.println("Searching for glyph match ");
                     replacement = matcher.group();
                 }
-                //find a substring
+                
+                //find a subscript
                 Matcher matchSubrscript = subcase.matcher(newValue);
                 while(matchSubrscript.find()){
                     System.out.println("Searching for Subscript match");
                     replacement = matchSubrscript.group();
                 }
                 
+                 //find a subscript
+                Matcher matchSuperscript = supercase.matcher(newValue);
+                while(matchSuperscript.find()){
+                    System.out.println("Searching for Superscript match");
+                    replacement = matchSuperscript.group();
+                }
                 
                 if(replacement != null){
                     replacement = replacement.trim();
                     
                     //If its a glyph...
                     if(replacement.matches(pattern.pattern())){
-                        System.out.println("replacement: '"+ replacement+"' matches a given pattern: ");
                         for(Map.Entry<String, String> entry : hm.entrySet()) {
-                                System.out.println("COMPARE LOOP. REPLACEMENT: '"+ replacement+"' HM.ENTRY: "+entry.getKey());
                             if(entry.getKey().equalsIgnoreCase(replacement)){
                                 replaceSymbol(entry.getKey(), entry.getValue(), cp);
                                 replacement = null;
@@ -143,58 +149,87 @@ public class PredicateLogicPadController implements Initializable {
                     }
                     //If its a subscript...
                     else if(replacement.matches(subcase.pattern())){
-                        System.out.println("replacement Matches substring regex");
-                        //TODO: you need to check if the charcters are valid for replacement....
-                        
-                        System.out.println("replaceWithSubscript Recieved String: "+ replacement);
-                        String s = replacement.replaceAll("_", "");
-                        String cleanedString = s.replace("\\", "");
-                        System.out.println("replaceWithSubscript Cleaned String: "+ cleanedString);
-                        
-                        StringBuffer str = new StringBuffer("");
-                        for(Map.Entry<String, String> entry : subscriptMaps.entrySet()){
-                            if(replacement.contains(entry.getKey())){
-                                str.append(entry.getValue());
-                            }
-                            System.out.println("CHAR SEQUENCE: "+str.toString());
+                        String cleanedString = cleanString(replacement, "_");
+                        if(InputTests.subscriptText(cleanedString)){
+                            replaceSymbol(replacement, replacementString(cleanedString, subscriptMaps), cp);
+                            replacement = null;
+                        }else {
+                            newAlert("Subscripts can only contain the following values: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, +, -, =, (, ), a, e, g, h, k, l, m, n, o, p, s, t, x. Please review your input and try again");
                         }
-                        replaceWithSubscript(replacement, str.toString(), cp);
-                        replacement = null;
-                    }else{
+                    }
+                    //if its a superscript...
+                    else if(replacement.matches(supercase.pattern())){
+                        System.out.println("Match for superscript input found");
+                        String cleanedString = cleanString(replacement, "\\^");
+                        if(InputTests.superscriptText(cleanedString)){
+                            replaceSymbol(replacement, replacementString(cleanedString, superscriptMaps), cp);
+                            replacement = null;
+                        }else{
+                            newAlert("Superscripts can only contain the following values: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, +, -, =, (, ), n. Please review your input and try again");
+                        }
+                    }
+                    else{
                         replacement = null;
                     }
                 }
             }
-        });
-                
+        });         
     }
     
-    private void replaceSymbol(String replacementCode, String uc, int crt){
-        int cp = (crt -(replacementCode.length()-2));
+    
+    private String patternMatch(Matcher matcher){
+        String s = null;
+        while(matcher.find()){
+                    System.out.println("Searching for glyph match ");
+                    s = matcher.group();
+                }
+        return s;
+    }
+    
+    private void replaceSymbol(String userInputShortCode, String unicodeGlyph, int crt){
         Platform.runLater(()->{
+            int caretPosition;
+            if(userInputShortCode.startsWith("\\_") || userInputShortCode.startsWith("\\^")){
+                caretPosition = crt-2;
+            }else {
+                caretPosition = (crt -(userInputShortCode.length()-2));
+            }
                         String txt = textPad.getText();
-                        textPad.setText(txt.replace(replacementCode, uc));
-                        textPad.positionCaret(cp);
+                        textPad.setText(txt.replace(userInputShortCode, unicodeGlyph));
+                        textPad.positionCaret(caretPosition);
                     });          
         }
     
-    
-    //TODO: CHECK IF THIS IS THIS NECESSARY? YOU COULD JUST USE THE ABOVE
-    private void replaceWithSubscript(String replacementSequence, String inputString, int crt){        
-        Platform.runLater( ()->{
-            String txt = textPad.getText();
-            textPad.setText(txt.replace(replacementSequence, inputString));
-            textPad.positionCaret(crt-2);
-        });
+    private String cleanString (String s, String framingChars){
+        String str = s.replaceAll(framingChars, "");
+        String cleanedString = str.replace("\\", "");
+        return cleanedString;
     }
     
+    private String replacementString(String cleanedString, Map<String, String> map) {
+        StringBuffer str = new StringBuffer("");
+        for (int i = 0; i < cleanedString.length(); i++) {
+            for (Map.Entry<String, String> entry : map.entrySet()) {
+                if (cleanedString.charAt(i) == entry.getKey().charAt(0)) {
+                    str.append(entry.getValue());
+                }
+            }
+        }
+        return str.toString();
+    }
+    
+    private void newAlert(String message){
+       Alert a = new Alert(Alert.AlertType.INFORMATION, message, ButtonType.OK);
+       a.showAndWait();
+    }
+    
+    //********************************************* SECTION: MENU BUTTON FUNCTIONALITY *****************************************************
     
     @FXML
     private void newGlyphPad(ActionEvent ev){
         System.out.println("New Button pressed");
         loadNewView("PredicateLogicPad.fxml", "GlyphPad");
     }
-    
  
     @FXML
     private void openSelected(ActionEvent ev) {
@@ -410,58 +445,14 @@ public class PredicateLogicPadController implements Initializable {
     }
     
     @FXML
-    private void aboutSelected(ActionEvent ev){
-        
+    private void aboutSelected(ActionEvent ev) {
         loadNewView("About.fxml", "About GlyphPad Beta");
-        
-        /*
-        
-        System.out.println("about button pressed");
-         FXMLLoader loader = new FXMLLoader();
-                loader.setLocation(getClass().getResource("About.fxml"));
-                try {
-                    loader.load();
-                } catch (IOException ex) {
-                    System.err.println("PredicateLogicPadController.aboutpSelected() ERROR: "+ex);
-
-                }
-                AboutController hv = loader.getController();
-                Parent p = loader.getRoot();
-                p.getStylesheets().add("glyphpad/styles/glyphpad.css");
-                Stage stage = new Stage();
-                stage.getIcons().add(new Image(("glyphpad/icons/Logo400.png")));
-                stage.setTitle("About GlyphPad Beta");
-                stage.setScene(new Scene(p));
-                stage.showAndWait();
-        */
     }
     
     @FXML
-    private void userGuideSelected(ActionEvent ev){
-        
+    private void userGuideSelected(ActionEvent ev) {
         loadNewView("HelpView.fxml", "GlyphPad Help");
-        
-        
-        /*
-        
-                FXMLLoader loader = new FXMLLoader();
-                loader.setLocation(getClass().getResource("HelpView.fxml"));
-                try {
-                    loader.load();
-                } catch (IOException ex) {
-                    System.err.println("PredicateLogicPadController.helpSelected() ERROR: "+ex);
-
-                }
-                HelpViewController hv = loader.getController();
-                Parent p = loader.getRoot();
-                p.getStylesheets().add("glyphpad/styles/glyphpad.css");
-                Stage stage = new Stage();
-                stage.getIcons().add(new Image(("glyphpad/icons/Logo400.png")));
-                stage.setTitle("GlyphPad Help");
-                stage.setScene(new Scene(p));
-                stage.showAndWait();
-        */
-            }
+    }
     
     
     private void loadNewView(String fxml, String title){
@@ -507,7 +498,7 @@ public class PredicateLogicPadController implements Initializable {
 
  
 
-       //////////////////////////////////////////////////////////////////// GETTERS AND SETTERS //////////////////////////////////////////////////////////////////
+       //*************************************************************** GETTERS AND SETTERS **********************************************************************
     public static int getFileHash() {
         return fileHash;
     }

@@ -13,9 +13,7 @@ public class FileUtility {
     
     
     public static String getDirectoryFromPath(String path){
-        
         int last = path.lastIndexOf("\\");
-        
         return path.substring(0,last);
         
     }
