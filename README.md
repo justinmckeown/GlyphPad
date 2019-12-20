@@ -14,5 +14,25 @@ GylphPad allows users to type short-codes which are rendered into mathematical '
 * Implication
 * Logical Equivilence (if and only if)
 
+#### Set Theory
+* Element of (set membership)
+* Subset
+* Proper Subset (Strict subsets or proper inclusions)
+* Superset
+* Proper Superset
+* Negation of all of the above
+* Union
+* Intersection
+* Difference
+* Cartesian Product
+* Power Set
+* Compliment
+
+### Special Charcters
+* N - Natural numbers
+* Z - the Integers
+* Q - Rational Numbers
+
+
 
 
