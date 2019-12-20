@@ -31,8 +31,11 @@ GylphPad allows users to type short-codes which are rendered into mathematical '
 ### Special Charcters
 * N - Natural numbers
 * Z - the Integers
-* Q - Rational Numbers
-
+* R - Rational Numbers
+* Z language Dot operator
+* Existential E
+* Inverted A for 'For All'
+* The Empty Set
 
 
 
