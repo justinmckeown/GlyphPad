@@ -18,6 +18,7 @@ public class GlyphStore {
     
     private Map<String, String> predicateLogic;
     private Dictionary setTheory;
+    private Map<String, String> otherChars;
     private Map<String, String> superscripts;
     private Map<String, String> subscripts;
 
@@ -35,30 +36,36 @@ public class GlyphStore {
         
         
         setTheory = new Hashtable();
+        
+        //Set theory general operators
         setTheory.put("\\uni", "\u222A"); //union
-        setTheory.put("\\int", "\u2229"); //intersection 
-        setTheory.put("\\diff", "\u22C2"); //difference
+        setTheory.put("\\int", "\u2229"); //intersection SMALL BUT DENSE 
+        //setTheory.put("\\sect", "\u22C2"); //intersection - BIG BUT THING
         setTheory.put("\\sub", "\u2286"); //subset
         setTheory.put("\\comp", "\u23BA"); //compliement
         setTheory.put("\\nsub", "\u2288"); //nsubset
         setTheory.put("\\psub", "\u2282"); //proper seubset / properly included
         setTheory.put("\\prop", "\u2282"); //proper subset or properly included
         setTheory.put("\\npsub", "\u2284"); //not a proper subset / not properly included
-        setTheory.put("\\sup", "\u2283");//superset
+        setTheory.put("\\sup", "\u2287"); //superset
         setTheory.put("\\nsup", "\u2289"); //not superset
-        setTheory.put("\\psup", "\u2287"); //proper superset
+        setTheory.put("\\psup", "\u2283");// proper superset
         setTheory.put("\\npsup", "\u2285"); //not a proper superset
         setTheory.put("\\ele", "\u2208"); //element of
         setTheory.put("\\nele", "\u2209"); //not an element of 
-        setTheory.put("\\Pow", "\u2119"); //power set
-        setTheory.put("\\Nat", "\u2115"); //Natural numbers 'N'
-        setTheory.put("\\Int", "\u2124"); //Integers 'Z'
-        setTheory.put("\\Rea", "\u211D"); //Real Number 'R'
-        setTheory.put("\\the", "\u2203"); //There exists
-        setTheory.put("\\for", "\u2200"); //for all
-        setTheory.put("\\bfd", "\u2981"); //big fat dot
-        setTheory.put("\\car", "\u2A09"); //Cartesian product
-        setTheory.put("\\emp", "\u2205"); //the empty set
+        setTheory.put("\\pow", "\u2119"); //power set
+        
+        //Set theory special characters
+        otherChars = new HashMap<>();
+        otherChars.put("\\nat", "\u2115"); //Natural numbers 'N'
+        otherChars.put("\\zzz", "\u2124"); //Integers 'Z'
+        otherChars.put("\\rea", "\u211D"); //Real Number 'R'
+        otherChars.put("\\the", "\u2203"); //There exists
+        otherChars.put("\\for", "\u2200"); //for all
+        otherChars.put("\\bfd", "\u2981"); //big fat dot
+        otherChars.put("\\giv", "\u2981"); //big fat dot
+        otherChars.put("\\car", "\u2A09"); //Cartesian product
+        otherChars.put("\\emp", "\u2205"); //the empty set
         
         superscripts = new HashMap<>();
         superscripts.put("0", "\u2070");
@@ -136,6 +143,15 @@ public class GlyphStore {
         return subscripts;
     }
 
+    public Map<String, String> getOtherChars() {
+        return otherChars;
+    }
+
+    public void setOtherChars(Map<String, String> otherChars) {
+        this.otherChars = otherChars;
+    }
+
+    
    
     
     

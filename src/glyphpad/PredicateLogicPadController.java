@@ -94,6 +94,10 @@ public class PredicateLogicPadController implements Initializable {
         hm.putAll((Map<? extends String, ? extends String>) glyphs.getSetTheory());
         
         
+        Map<String, String> otherChars; 
+        otherChars = glyphs.getOtherChars();
+        hm.putAll(otherChars);
+        
         //Subscripts collections...
         Map<String, String> subscriptMaps;
         subscriptMaps = glyphs.getSubscripts();

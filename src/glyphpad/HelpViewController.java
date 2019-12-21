@@ -5,6 +5,7 @@
  */
 package glyphpad;
 
+import glyphpad.utilities.TextFormatUtility;
 import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -14,12 +15,11 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.paint.Color;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 
 /**
@@ -32,6 +32,8 @@ public class HelpViewController implements Initializable {
     @FXML TextFlow textFlow;
     @FXML Text textTitle;
     @FXML ScrollPane scrollPane;
+    @FXML TreeView<String> helpMenu;
+    
     
     HelpTextStore helpTextStore;
     
@@ -42,13 +44,15 @@ public class HelpViewController implements Initializable {
 
         LinkedHashMap<String, String> propositionalLogicText;
         LinkedHashMap<String, String> setTheoryText;
+        LinkedHashMap<String, String> otherSymbolsText;
 
         helpTextStore = new HelpTextStore();
         propositionalLogicText = helpTextStore.getHelpText();
         setTheoryText = helpTextStore.getSetTheoryTextHelp();
+        otherSymbolsText = helpTextStore.getOtherCharsTextHelp();
         
         
-        formatText(propositionalLogicText, setTheoryText);
+        formatText(propositionalLogicText, setTheoryText, otherSymbolsText);
         
         double edgeBuffer = 20;
         scrollPane.widthProperty().addListener(new ChangeListener<Number>(){
@@ -59,30 +63,98 @@ public class HelpViewController implements Initializable {
             
         });
         
+        //Set up help menu
+        TreeItem<String> root, overview, glyphList, pLogicList, sTList, zList, propositionalLogic, setTheory;
+        
+        root = new TreeItem<>();
+        root.setExpanded(true);
+        
+        
+        //Overview branch
+        overview = newBranch("Overview", root);
+        newBranch("Introduction", overview);
+        newBranch("glyphCode Rules", overview);
+        glyphList = newBranch("glyphCode Lists", overview);
+        pLogicList = newBranch("Propositional Logic", glyphList);
+        sTList = newBranch("Set Theory", glyphList);
+        zList = newBranch("Other glyphCodes", glyphList);
+        
+        
+        newBranch("quick start tutorial", overview);
+        
+        propositionalLogic = newBranch("Propositional Logic", root);
+        newBranch("Negation", propositionalLogic);
+        newBranch("Conjunction", propositionalLogic);
+        newBranch("Disjunction", propositionalLogic);
+        newBranch("Implication", propositionalLogic);
+        newBranch("Logical Equivalence", propositionalLogic);
+        
+        setTheory = newBranch("Set Theory", root);
+        newBranch("Set Membership", setTheory);
+        newBranch("Subsets", setTheory);
+        newBranch("Proper Subsets", setTheory);
+        newBranch("Supersets", setTheory);
+        newBranch("Supersets", setTheory);
+        newBranch("Proper Supersets", setTheory);
+        newBranch("Negated relations", setTheory);
+        newBranch("Set Union", setTheory);
+        newBranch("Set Intersection", setTheory);
+        newBranch("Set Difference", setTheory);
+        newBranch("Set Equality", setTheory);
+        newBranch("Set Equality", setTheory);
+        newBranch("Cardinality", setTheory);
+        newBranch("Power Sets", setTheory);
+        newBranch("Set Compliment", setTheory);
+        newBranch("Cartesian Products", setTheory);
+        
+        
+        //add the branches to the tree by setting the root
+        helpMenu.setRoot(root);
+        helpMenu.setShowRoot(false);
+        
     }    
     
-    private void formatText(LinkedHashMap<String, String> propositionalLogic, LinkedHashMap<String, String> setTheory)  {
-
+    private void formatText(LinkedHashMap<String, String> propositionalLogic, LinkedHashMap<String, String> setTheory, LinkedHashMap<String, String> otherChars)  {
         
-        Text intro = new Text("Overview: The basics of using GlyphPad.\n");
-        intro.setFont(Font.font("Calibri", FontWeight.BOLD, 26));
+        //INTRO
+        textFlow.getChildren().add(TextFormatUtility.headerText("Introduction"));
+        textFlow.getChildren().add(TextFormatUtility.bodyText("GlyphPad is designed to make writing propositional logic and basic set theory formulas much easier. "
+                + "It achieves this thorugh the use of inutivitive 'glyphCodes'. these are 3 - 5 character sequences prefixed with a backslash.\n"));
         
-        Text introBlurb = new Text("GlyphPad is designed to make writing propositional logic and basic set theory formulas much easier. "
-                + "It achieves this thorugh the use of inutivitive three to four character shortcodes prefixed with a '\\'. "
-                + "The three letters for each short code is derived from the first three letters of the word formally used for the given symbol. "
-                + "For exmaple, the shortcode for the negation symbol is '\\neg'. If the user types this then the shortcode will be transformed into the negation symbol '¬'"
-                + "\n\n"
-                + "The full list of symbols currently included in GlyphPad are listed below along with their shortcodes. It is advised you take a moment to read these as it will "
-                + "help you use the app. Under each symbol the related laws of propositional logic have also been listed for convenience.\n\n");
-        introBlurb.setFont(Font.font("Calibri", FontWeight.MEDIUM, 24));
-                
-        Text propHeading = new Text("1.Propositional Logic: short codes and Laws:\n");
-        propHeading.setFont(Font.font("Calibri", FontWeight.BOLD, 30));
+        //GLYPHCODES:
+        textFlow.getChildren().add(TextFormatUtility.headerText("GlyphCode Rules"));
+        textFlow.getChildren().add(TextFormatUtility.bodyText("GlyphCodes are designed on a set of intuitive rules:\n\n"
+                + "1. A glyphCode is comrpised of the first 3 -5 letters of a symbols name prefixed with a backslash. "
+                + "For exmaple, the glyphCode for the negation symbol is '\\neg'. If the user types this then the shortcode will be transformed into the negation symbol '¬'\n\n"
+                + "2. The negation of a glyphCode is created by prefixing the symbols regular glyphCode with an 'n'. "
+                + "for example, the glyphCode for 'Element of' is '\\ele'. The glyphCode for its negation, 'not an element of', is '\\nele'\n\n"
+                + "3. A subscript character is created by following the backslash character with an underscorce, followed by the characters you wish to represent in subscript "
+                + "followed by a closing using underscore. For example, the numbers 123 can be rendered in subscript by entering '\\_123_'.\n\n"
+                + "4. A superscript character is created by following the backslash character with the ^ symbol, followed by the characters you wish to represent in superscript "
+                + "followed by a closing ^. For example, the numbers 123 can be rendered in superscript by entering '\\^123^.'\n\n"
+                + "The full list of glphyCodes currently utilised in GlyphPad are given below along with their shortcodes. It is advised you take a moment to read these.\n"));
         
-        textFlow.getChildren().addAll(intro, introBlurb, propHeading);
+        
+        textFlow.getChildren().add(TextFormatUtility.headerText("GlyphCode Lists"));
+        
+        textFlow.getChildren().add(TextFormatUtility.headerText("Propositional Logic:"));
+        for (Map.Entry<String, String> entry : propositionalLogic.entrySet()) {
+            textFlow.getChildren().add(TextFormatUtility.bodyText(entry.getKey()));
+        }
+        
+        textFlow.getChildren().add(TextFormatUtility.headerText("Set Theory:"));
+        for (Map.Entry<String, String> entry : setTheory.entrySet()) {
+            textFlow.getChildren().add(TextFormatUtility.bodyText(entry.getKey()));
+        }
+        
+        textFlow.getChildren().add(TextFormatUtility.headerText("Other Mathematical Symbols:"));
+        for (Map.Entry<String, String> entry : otherChars.entrySet()) {
+            textFlow.getChildren().add(TextFormatUtility.bodyText(entry.getKey()));
+        }
+        
+        /*
         
         for (Map.Entry<String, String> entry : propositionalLogic.entrySet()) {
-
             Text title = new Text(entry.getKey() + "\n");
             title.setFont(Font.font("Calibri", FontWeight.BOLD, 26));
 
@@ -103,7 +175,28 @@ public class HelpViewController implements Initializable {
             blurb.setFont(Font.font("Calibri", FontWeight.MEDIUM, 24));
             textFlow.getChildren().addAll(title, blurb);
         }
+        */
 
+    }
+    
+    
+    private TreeItem<String> newBranch(String name, TreeItem<String> parent){
+        TreeItem<String>  item = new TreeItem<>(name);
+        item.setExpanded(true);
+        parent.getChildren().add(item);
+        return item;
+    }
+    
+     private void headerText(String s){
+        Text intro = new Text(s+"\n");
+        intro.setFont(Font.font("Calibri", FontWeight.BOLD, 26));
+        textFlow.getChildren().add(intro);
+    }
+     
+     private void bodyText(String s){
+        Text intro = new Text(s+"\n");
+        intro.setFont(Font.font("Calibri", FontWeight.BOLD, 26));
+        textFlow.getChildren().add(intro);
     }
 }
 

@@ -16,6 +16,14 @@
     -fx-background:#f6f5f1;
 }
 
+/*.Button {
+    -fx-background-color:#D2D6CC;
+}
+
+.Button:hover{
+    -fx-background-color:#f6f5f1;
+}*/
+
 #textwhite {
     -fx-background-color:#ffffff;
 }
