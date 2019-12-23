@@ -16,6 +16,7 @@ import java.util.Map;
  */
 public class GlyphStore {
     
+    private Map<String, String> coreMaths;
     private Map<String, String> predicateLogic;
     private Dictionary setTheory;
     private Map<String, String> otherChars;
@@ -24,6 +25,18 @@ public class GlyphStore {
 
     public GlyphStore() {
         
+        
+        //core maths
+        coreMaths = new HashMap<>();
+        coreMaths.put("\\appro", "\u2248"); //aproximation
+        coreMaths.put("\\summ", "\u2211"); //summation
+        coreMaths.put("\\less", "\u2264"); //Less than or equal to 
+        coreMaths.put("\\grea", "\u2265"); //greater than or equal to 
+        coreMaths.put("\\nequ", "\u2260"); //not equal
+        coreMaths.put("\\eop", "\u220E"); //End Of Proof
+        coreMaths.put("\\ang", "\u221F"); //angle
+        
+        //Predicate logic
         predicateLogic = new HashMap<>();
         predicateLogic.put("\\neg", "\u00AC"); //negation
         predicateLogic.put("\\con", "\u2227"); //conjoined
@@ -33,14 +46,15 @@ public class GlyphStore {
         predicateLogic.put("\\imp", "\u21D2"); //infers
         predicateLogic.put("\\iff", "\u21D4"); //iff and only iff
         predicateLogic.put("\\line", "\u23af"); //iff and only iff
+        predicateLogic.put("\\the", "\u2203"); //There exists
+        predicateLogic.put("\\for", "\u2200"); //for all
         
-        
-        setTheory = new Hashtable();
         
         //Set theory general operators
+        setTheory = new Hashtable();
         setTheory.put("\\uni", "\u222A"); //union
         setTheory.put("\\int", "\u2229"); //intersection SMALL BUT DENSE 
-        //setTheory.put("\\sect", "\u22C2"); //intersection - BIG BUT THING
+        //setTheory.put("\\sect", "\u22C2"); //intersection - BIG BUT THIN
         setTheory.put("\\sub", "\u2286"); //subset
         setTheory.put("\\comp", "\u23BA"); //compliement
         setTheory.put("\\nsub", "\u2288"); //nsubset
@@ -54,18 +68,51 @@ public class GlyphStore {
         setTheory.put("\\ele", "\u2208"); //element of
         setTheory.put("\\nele", "\u2209"); //not an element of 
         setTheory.put("\\pow", "\u2119"); //power set
+        setTheory.put("\\car", "\u2A09"); //Cartesian product
+        setTheory.put("\\emp", "\u2205"); //the empty set
         
-        //Set theory special characters
+        //Set relations
+        setTheory.put("\\allr", "\u2194"); //Double headed Arrow: the set of all relations between a and b
+        setTheory.put("\\mapl", "\u21A6"); //Maplet: a maps to b
+        setTheory.put("\\dres", "\u25C1"); //domain restriction
+        setTheory.put("\\dcres", "\u2A64"); //domain co-restriction
+        setTheory.put("\\rres", "\u25B7"); //range restriction
+        setTheory.put("\\rcres", "\u2A65"); //range co-restriction
+        
+        setTheory.put("\\lrib", "\u2987"); //z - left image bracket
+        setTheory.put("\\rrib", "\u2988"); //z - right image bracket
+        setTheory.put("\\rcom", "\u25E6"); //z - relational composition 
+        setTheory.put("\\refr", "\u25FB"); //reflexive relationship \u25A1
+        setTheory.put("\\over", "\u2295"); //orverriding
+        
+        
+        //Arrows: Injective, Serjective, Bijective
+        setTheory.put("\\arr", "\u2192"); //generic arrow
+        setTheory.put("\\inj", "\u21F8"); //intective relations
+        setTheory.put("\\tinj", "\u21A3"); //total set of intective relations
+        setTheory.put("\\ser", "\u2900"); //serjective relations
+        setTheory.put("\\tser", "\u21A0"); //total set of serjective relations
+        setTheory.put("\\tbi", "\u2917"); //total set of bijective relations
+        
+        //Bags
+        setTheory.put("\\bagl", "\u27E6"); //bag left bracket
+        setTheory.put("\\bagr", "\u27E7"); //bag right bracket
+        
+        //Sequences
+        setTheory.put("\\seql", "\u27E8"); //sequence left bracket
+        setTheory.put("\\seqr", "\u27E9"); //sequence right bracket
+        setTheory.put("\\cat", "\u2312"); //concat
+        
+        
+        //Other Special characters
         otherChars = new HashMap<>();
         otherChars.put("\\nat", "\u2115"); //Natural numbers 'N'
         otherChars.put("\\zzz", "\u2124"); //Integers 'Z'
-        otherChars.put("\\rea", "\u211D"); //Real Number 'R'
-        otherChars.put("\\the", "\u2203"); //There exists
-        otherChars.put("\\for", "\u2200"); //for all
+        otherChars.put("\\rea", "\u211D"); //Real Numbers 'R'
+        otherChars.put("\\rat", "\u211A"); //Rational Numbers 'R'
+        otherChars.put("\\zee", "\u22FF"); //Z - notation E
         otherChars.put("\\bfd", "\u2981"); //big fat dot
         otherChars.put("\\giv", "\u2981"); //big fat dot
-        otherChars.put("\\car", "\u2A09"); //Cartesian product
-        otherChars.put("\\emp", "\u2205"); //the empty set
         
         superscripts = new HashMap<>();
         superscripts.put("0", "\u2070");
@@ -149,6 +196,10 @@ public class GlyphStore {
 
     public void setOtherChars(Map<String, String> otherChars) {
         this.otherChars = otherChars;
+    }
+
+    public Map<String, String> getCoreMaths() {
+        return coreMaths;
     }
 
     
