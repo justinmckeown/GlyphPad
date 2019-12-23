@@ -93,6 +93,9 @@ public class PredicateLogicPadController implements Initializable {
         hm = glyphs.getPredicateLogic();
         hm.putAll((Map<? extends String, ? extends String>) glyphs.getSetTheory());
         
+        Map<String, String> coreMath;
+        coreMath = glyphs.getCoreMaths();
+        hm.putAll(coreMath);
         
         Map<String, String> otherChars; 
         otherChars = glyphs.getOtherChars();
