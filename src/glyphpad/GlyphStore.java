@@ -95,12 +95,12 @@ public class GlyphStore {
         setTheory.put("\\tbi", "\u2917"); //total set of bijective relations
         
         //Bags
-        setTheory.put("\\bagl", "\u27E6"); //bag left bracket
-        setTheory.put("\\bagr", "\u27E7"); //bag right bracket
+        setTheory.put("\\lbag", "\u27E6"); //bag left bracket
+        setTheory.put("\\rbag", "\u27E7"); //bag right bracket
         
         //Sequences
-        setTheory.put("\\seql", "\u27E8"); //sequence left bracket
-        setTheory.put("\\seqr", "\u27E9"); //sequence right bracket
+        setTheory.put("\\lseq", "\u27E8"); //sequence left bracket
+        setTheory.put("\\rseq", "\u27E9"); //sequence right bracket
         setTheory.put("\\cat", "\u2312"); //concat
         
         

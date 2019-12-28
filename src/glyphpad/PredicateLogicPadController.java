@@ -117,8 +117,10 @@ public class PredicateLogicPadController implements Initializable {
             
             @Override
             public void changed(final ObservableValue<? extends String> observable, final String oldValue, final String newValue){
-                int cp = textPad.caretPositionProperty().get();
+                System.out.println("OLD VALUE: "+ oldValue);
+                System.out.println("NEW VALUE: "+ newValue);
                 
+                int cp = textPad.caretPositionProperty().get();
                 String replacement = null;
                 
                 //find a glyph (set theory or propositional logic)

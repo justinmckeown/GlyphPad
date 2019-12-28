@@ -24,12 +24,145 @@ public class HelpTextStore {
     private LinkedHashMap<String, String> setTheoryTextHelp;
     private LinkedHashMap<String, String> otherCharsTextHelp;
     
+    private LinkedHashMap<String, String> introduction;
+    private LinkedHashMap<String, String> glyphcodeRules;
+    private LinkedHashMap<String, String> plCodes;
+    private LinkedHashMap<String, String> stCodes;
+    private LinkedHashMap<String, String> bCodes;
+    private LinkedHashMap<String, String> aCodes;
+    private LinkedHashMap<String, String> letterCodes;
+    private LinkedHashMap<String, String> subscripts;
+    private LinkedHashMap<String, String> superscripts;
+    
     
     
     public HelpTextStore(){
         helpText = new LinkedHashMap<String, String>();
         setTheoryTextHelp = new LinkedHashMap<String, String>();
         otherCharsTextHelp = new LinkedHashMap<String, String>();
+        
+        
+        introduction = new LinkedHashMap<String, String>();
+        glyphcodeRules = new LinkedHashMap<String, String>();
+        plCodes = new LinkedHashMap<String, String>();
+        stCodes = new LinkedHashMap<String, String>();
+        bCodes = new LinkedHashMap<String, String>();
+        aCodes = new LinkedHashMap<String, String>();
+        letterCodes = new LinkedHashMap<String, String>();
+        subscripts = new LinkedHashMap<String, String>();
+        superscripts = new LinkedHashMap<String, String>();
+        
+        
+        //introduction
+        introduction.put("title", "Introduction");
+        introduction.put("blurb", "GlyphPad is designed to make writing propositional logic and basic set theory formulas much easier."
+                + "It achieves this thorugh the use of inutivitive 'glyphCodes'. these are 3 - 5 character sequences prefixed with a backslash.\n");
+        
+        
+        //glyphPadRules
+        glyphcodeRules.put("title", "GlyphCode Rules");
+        glyphcodeRules.put("blurb", "GlyphCodes are designed using a set of intuitive rules. these rules are explained below. The logic being that if you understand the "
+                + "rules used to create the GlyphCodes then remembering each code requires much less effort:\n\n"
+                + "1. A glyphCode is comrpised of the first 3 -5 letters of a symbols name prefixed with a backslash.\n"
+                + "For example, the glyphCode for the negation symbol is '\\neg'. If the user types this then the shortcode will be transformed into the negation symbol '¬'"
+                + "\n\n"
+                + "2. The negation of a glyphCode is created by prefixing the symbols regular glyphCode with an 'n'"
+                + "for example, the glyphCode for 'Element of' is '\\ele'. The glyphCode for its negation, 'not an element of', is '\\nele'"
+                + "\n\n"
+                + "3. A similar rule to rule 2 is used to create bracket characters. A left bracket is prefixed with an 'l' and a right with a 'r'. For example, the left sequence "
+                + "bracket's short code is '\\lseq' and the right sequence bracket shortcode is '\\rseq'. The same is true for bag brackets, image brackets and all other bracket types "
+                + "\n\n"
+                + "4. A subscript character is created by following the backslash character with an underscorce, followed by the characters you wish to represent in subscript"
+                + "followed by a closing using underscore. For example, the numbers 123 can be rendered in subscript by entering '\\_123_'"
+                + "\n\n"
+                + "5. A superscript character is created by following the backslash character with the ^ symbol, followed by the characters you wish to represent in superscript"
+                + "followed by a closing ^. For example, the numbers 123 can be rendered in superscript by entering '\\^123^."
+                + "\n\n"
+                + "The full list of glphyCodes currently utilised in GlyphPad are given in the subsequent sections with their shortcodes. It is advised you take a moment to read these."
+                + "\n");
+        
+        //Propositional Logic
+        plCodes.put("title", "Propositional Logic");
+        plCodes.put("blurb", "The following short codes may be used to prodcue their associated mathematical glyphs:");
+        plCodes.put("¬ Negation", " \\neg");
+        plCodes.put("∧ Conjunction", "\\con or \\and");
+        plCodes.put("∨ Disjunction", "\\dis or \\orr");
+        plCodes.put("⇒ Implication", "\\imp");
+        plCodes.put("⇔ Logical Equivilenece (if, and only if)", "\\iff");
+        
+        
+        //Set Theory 
+        stCodes.put("title", "Set Theory");
+        stCodes.put("blurb", "the following short codes may be used to prodcue their associated mathematical glyphs:");
+        stCodes.put("∈ Set Membership", "\\ele");
+        stCodes.put("∉ Set Membership", "\\nele");
+        stCodes.put("⊆ Subsets ", "\\sub");
+        stCodes.put("⊂ Proper subset", "\\prop or \\psub");
+        stCodes.put("⊈ Not a Subset ", "\\nsub");
+        stCodes.put("⊄ Not a Proper Subset", "\\npsub");
+        stCodes.put("⊇ Supersets", "\\sup");
+        stCodes.put("⊃ Proper Superset ", "\\psup");
+        stCodes.put("⊉ not a Superset ", "\\nsup");
+        stCodes.put("⊅ not a Proper Superset", "\\npsup");
+        stCodes.put("∪ Set Union", "\\uni");
+        stCodes.put("∩ Set Intersection", "\\int");
+        stCodes.put("× Cartesian Products", "\\cart");
+        stCodes.put("∅ The Empty Set", "\\emp");
+        
+        stCodes.put("↦ Maplet", "\\mapl");
+        stCodes.put("↔ All Relations (A ↔ B)", "\\allr");
+        stCodes.put("↔ All Relations (A ↔ B)", "\\allr");
+        stCodes.put("◁ Domain restriction ", "\\dres");
+        stCodes.put("⩤ Domain co-restriction ", "\\dcres");
+        stCodes.put("▷ Range restriction ", "\\rres");
+        stCodes.put("⩥ Range co-restriction ", "\\rcres");
+        stCodes.put("◦ relational composition", "\\rcom");
+        stCodes.put("◻ reflexive composition", "\\refr");
+        stCodes.put("⊕ Overiding", "\\over");
+        stCodes.put("⌒ Concatenate", "\\cat");
+        stCodes.put("⦁ Z dot operator. 'give me' of 'Big Fat dot' ", "\\giv or \\bfd");
+        stCodes.put("− Compliment", "\\comp");
+        
+        //brackets
+        bCodes.put("title", "Brackets");
+        bCodes.put("blurb", "the following short codes may be used to prodcue the associated bracket types used in set theory and Z:");
+        bCodes.put("⦇ left range image bracket", "\\lrib");
+        bCodes.put("⦈ right range image bracket", "\\rrib");
+        bCodes.put("⟦ left bag bracket", "\\lbag");
+        bCodes.put("⟧ right bag bracket ", "\\rbag");
+        bCodes.put("⟨ left sequence bracket ", "\\lseq");
+        bCodes.put("⟩ right sequence bracket ", "\\rseq");
+        
+        //Arrows
+        aCodes.put("title", "Arrows");
+        aCodes.put("blurb", "the following short codes may be used to prodcue the associated arrows used in set theory and Z:");
+        aCodes.put("→ Generic arrow", "\\arr");
+        aCodes.put("⇸ Injective relations", "\\inj");
+        aCodes.put("↣ Total set of Injective relations", "\\tinj");
+        aCodes.put("⤀ Serjective relations", "\\ser");
+        aCodes.put("↠ Total set of Serjective relations", "\\tser");
+        aCodes.put("⤗ Total set of bijective relations", "\\tbi");
+        
+        //Other
+        letterCodes.put("title", "Letter Like Charcters");
+        letterCodes.put("blurb", "the following short codes may be used to prodcue the associated letter like symbols:");
+        letterCodes.put("ℙ Power Sets", "\\pow");
+        letterCodes.put("ℕ The set of all Natural numbers", "\\nat");
+        letterCodes.put("ℚ The set of all Rational Numbers", "\\rat");
+        letterCodes.put("ℝ The set of all Real numbers ", "\\rea");
+        letterCodes.put("ℤ The set of all Integers", "\\zzz");
+        letterCodes.put("∀ Universal quantification (For all...) ", "\\for");
+        letterCodes.put("∃ Existential quantification: (There exists...) ", "\\the");
+        
+        subscripts.put("title", "Subscripts");
+        subscripts.put("Subscript characters", "supscripts may be achived by utilizing the backslash character followed by an underscrore, "
+                + "followed by the characters you wish to appear in subscript. A final underscore must follow the sequence to signify the end of teh subscript sequence. "
+                + "For example typing \\_12345_ would give the numbers ₁₂₃₄₅ in subscript");
+        superscripts.put("title", "Superscripts");
+        superscripts.put("Superscript characters", "superscripts may be achived by utilizing the backslash character followed by the ^ charcter, "
+                + "followed by the characters you wish to appear in superscript. A final ^ must follow the sequence to signify the end of the superscript sequence. "
+                + "For example typing \\^12345^ would give the numbers ¹²³⁴⁵ in superscript");
+        
         
         helpText.put("¬ Negation: '\\neg'", "Law 1.1.1: Not True is logically equivilent to false and vice versa:\n(¬𝑡𝑟𝑢𝑒) ⟺ 𝑓𝑎𝑙𝑠𝑒 \n(¬𝑓𝑎𝑙𝑠𝑒) ⟺ 𝑡𝑟𝑢𝑒\n\n"
                 + "Law 1.1.2: Two negatives make a positive:\n(¬¬𝑝) ⟺ 𝑝");
@@ -130,7 +263,7 @@ public class HelpTextStore {
                 +"Law 2.8.4: the Cardinality of the intersection of S and T is equal to the cardinality of S minus the cardinality of the intersection of S and T \n" 
                 +"#(𝑆\\𝑇) = #𝑆 − #(𝑆 ∩ 𝑇)");
         
-        setTheoryTextHelp.put("ℙ Power Sets '\\Pow'", "Law 2.9.1: Set S is an element of the power set of T if and only if S is a subset of T \n" 
+        setTheoryTextHelp.put("ℙ Power Sets '\\pow'", "Law 2.9.1: Set S is an element of the power set of T if and only if S is a subset of T \n" 
                 +"𝑆 ∈ ℙ 𝑇 ⟺ 𝑆 ⊆ 𝑇 \n\n" 
                 +"Law 2.9.2: the empty set is an element of the power set of a any given set S \n" 
                 +"∅ ∈ ℙ 𝑆 \n\n" 
@@ -168,6 +301,7 @@ public class HelpTextStore {
     
     
 
+ /*
     
     public LinkedHashMap<String, String> getHelpText() {
         return helpText;
@@ -179,6 +313,51 @@ public class HelpTextStore {
 
     public LinkedHashMap<String, String> getOtherCharsTextHelp() {
         return otherCharsTextHelp;
+    }
+
+    public LinkedHashMap<String, String> getStCodes() {
+        return stCodes;
+    }
+
+    public LinkedHashMap<String, String> getPlCodes() {
+        return plCodes;
+    }
+    */   
+
+    public LinkedHashMap<String, String> getIntroduction() {
+        return introduction;
+    }
+
+    public LinkedHashMap<String, String> getGlyphcodeRules() {
+        return glyphcodeRules;
+    }
+
+    public LinkedHashMap<String, String> getPlCodes() {
+        return plCodes;
+    }
+
+    public LinkedHashMap<String, String> getStCodes() {
+        return stCodes;
+    }
+
+    public LinkedHashMap<String, String> getbCodes() {
+        return bCodes;
+    }
+
+    public LinkedHashMap<String, String> getaCodes() {
+        return aCodes;
+    }
+
+    public LinkedHashMap<String, String> getLetterCodes() {
+        return letterCodes;
+    }
+
+    public LinkedHashMap<String, String> getSubscripts() {
+        return subscripts;
+    }
+
+    public LinkedHashMap<String, String> getSuperscripts() {
+        return superscripts;
     }
     
     

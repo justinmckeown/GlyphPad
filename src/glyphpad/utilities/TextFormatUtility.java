@@ -26,9 +26,22 @@ import javafx.scene.text.Text;
  */
 public class TextFormatUtility {
     
-    public static Text headerText(String s){
-        Text intro = new Text("\n"+s+"\n");
+    
+    public static Text titleText(String s){
+        Text intro = new Text("\n"+s);
+        intro.setFont(Font.font("Calibri", FontWeight.EXTRA_BOLD, 34));
+        return intro;
+    }
+    
+    public static Text headerText(String s, String lineBreak){
+        Text intro = new Text("\n"+s+lineBreak);
         intro.setFont(Font.font("Calibri", FontWeight.BOLD, 26));
+        return intro;
+    }
+    
+    public static Text headerTwoText(String s){
+        Text intro = new Text("\n"+s+"\n");
+        intro.setFont(Font.font("Calibri", FontWeight.BOLD, 24));
         return intro;
     }
     
