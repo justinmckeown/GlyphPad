@@ -61,7 +61,7 @@
             </HBox>
             <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="1">
                <children>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="GlyphPad is a lightweight tool for writing and editing Propositional Logic and basic Set Theory. It's a work in progress. Enjoy!" wrappingWidth="444.27880859375">
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="GlyphPad is a lightweight tool for writing and editing Propositional Logic and basic Set Theory. It was developed for use primarily by Computer Science students." wrappingWidth="444.27880859375">
                      <font>
                         <Font size="20.0" />
                      </font>
