@@ -83,7 +83,7 @@ public class HelpTextStore {
         
         //Propositional Logic
         plCodes.put("title", "Propositional Logic");
-        plCodes.put("blurb", "The following short codes may be used to prodcue their associated mathematical glyphs:");
+        plCodes.put("blurb", "The following short codes may be used to produce their associated mathematical glyphs:");
         plCodes.put("¬ Negation", " \\neg");
         plCodes.put("∧ Conjunction", "\\con or \\and");
         plCodes.put("∨ Disjunction", "\\dis or \\orr");
@@ -93,7 +93,7 @@ public class HelpTextStore {
         
         //Set Theory 
         stCodes.put("title", "Set Theory");
-        stCodes.put("blurb", "the following short codes may be used to prodcue their associated mathematical glyphs:");
+        stCodes.put("blurb", "the following short codes may be used to produce their associated mathematical glyphs:");
         stCodes.put("∈ Set Membership", "\\ele");
         stCodes.put("∉ Set Membership", "\\nele");
         stCodes.put("⊆ Subsets ", "\\sub");
@@ -125,7 +125,7 @@ public class HelpTextStore {
         
         //brackets
         bCodes.put("title", "Brackets");
-        bCodes.put("blurb", "the following short codes may be used to prodcue the associated bracket types used in set theory and Z:");
+        bCodes.put("blurb", "the following short codes may be used to produce the associated bracket types used in set theory and Z:");
         bCodes.put("⦇ left range image bracket", "\\lrib");
         bCodes.put("⦈ right range image bracket", "\\rrib");
         bCodes.put("⟦ left bag bracket", "\\lbag");
@@ -135,7 +135,7 @@ public class HelpTextStore {
         
         //Arrows
         aCodes.put("title", "Arrows");
-        aCodes.put("blurb", "the following short codes may be used to prodcue the associated arrows used in set theory and Z:");
+        aCodes.put("blurb", "the following short codes may be used to produce the associated arrows used in set theory and Z:");
         aCodes.put("→ Generic arrow", "\\arr");
         aCodes.put("⇸ Injective relations", "\\inj");
         aCodes.put("↣ Total set of Injective relations", "\\tinj");
