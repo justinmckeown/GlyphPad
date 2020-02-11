@@ -109,16 +109,18 @@ public class PredicateLogicPadController implements Initializable {
         Map<String, String> superscriptMaps;
         superscriptMaps = glyphs.getSuperscripts();
         
-        textPad.textProperty().addListener(new ChangeListener<String>(){
+        textPad.textProperty().addListener(new ChangeListener<String>() {
+            
             
             Pattern pattern = Pattern.compile("(?s)\\\\[[^_]&&a-zA-Z]{3,5}", Pattern.CASE_INSENSITIVE); //TODO: should this be case sensitive?    
-            Pattern subcase = Pattern.compile("(?s)\\\\_[a-zA-Z0-9\\+\\-\\=\\(\\)]{0,}_", Pattern.CASE_INSENSITIVE); //TODO: should this be case sensitive?    +-=()
+            Pattern subcase = Pattern.compile("(?s)\\\\_[a-zA-Z0-9\\+\\-\\=\\(\\)]{0,}_", Pattern.CASE_INSENSITIVE); //TODO: should this be case sensitive?
             Pattern supercase = Pattern.compile("(?s)\\\\\\^[a-zA-Z0-9\\+\\-\\=\\(\\)]{0,}\\^", Pattern.CASE_INSENSITIVE); //TODO: should this be case sensitive?    
             
             @Override
             public void changed(final ObservableValue<? extends String> observable, final String oldValue, final String newValue){
                 System.out.println("OLD VALUE: "+ oldValue);
                 System.out.println("NEW VALUE: "+ newValue);
+                System.out.println("TEXT PAD CONTENT: "+textPad.getAccessibleText());
                 
                 int cp = textPad.caretPositionProperty().get();
                 String replacement = null;
@@ -126,24 +128,25 @@ public class PredicateLogicPadController implements Initializable {
                 //find a glyph (set theory or propositional logic)
                 Matcher matcher = pattern.matcher(newValue);
                 while(matcher.find()){
-                    System.out.println("Searching for glyph match ");
+                    //System.out.println("Searching for glyph match ");
                     replacement = matcher.group();
                 }
                 
                 //find a subscript
                 Matcher matchSubrscript = subcase.matcher(newValue);
                 while(matchSubrscript.find()){
-                    System.out.println("Searching for Subscript match");
+                    //System.out.println("Searching for Subscript match");
                     replacement = matchSubrscript.group();
                 }
                 
                  //find a subscript
                 Matcher matchSuperscript = supercase.matcher(newValue);
                 while(matchSuperscript.find()){
-                    System.out.println("Searching for Superscript match");
+                    //System.out.println("Searching for Superscript match");
                     replacement = matchSuperscript.group();
                 }
                 
+                System.out.println("caretPosition: "+ cp);
                 if(replacement != null){
                     replacement = replacement.trim();
                     
@@ -168,7 +171,7 @@ public class PredicateLogicPadController implements Initializable {
                     }
                     //if its a superscript...
                     else if(replacement.matches(supercase.pattern())){
-                        System.out.println("Match for superscript input found");
+                        //System.out.println("Match for superscript input found");
                         String cleanedString = cleanString(replacement, "\\^");
                         if(InputTests.superscriptText(cleanedString)){
                             replaceSymbol(replacement, replacementString(cleanedString, superscriptMaps), cp);
@@ -183,16 +186,6 @@ public class PredicateLogicPadController implements Initializable {
                 }
             }
         });         
-    }
-    
-    
-    private String patternMatch(Matcher matcher){
-        String s = null;
-        while(matcher.find()){
-                    System.out.println("Searching for glyph match ");
-                    s = matcher.group();
-                }
-        return s;
     }
     
     private void replaceSymbol(String userInputShortCode, String unicodeGlyph, int crt){
@@ -236,7 +229,7 @@ public class PredicateLogicPadController implements Initializable {
     
     @FXML
     private void newGlyphPad(ActionEvent ev){
-        System.out.println("New Button pressed");
+        //System.out.println("New Button pressed");
         loadNewView("PredicateLogicPad.fxml", "GlyphPad");
     }
  
@@ -304,12 +297,12 @@ public class PredicateLogicPadController implements Initializable {
     
     @FXML
     private void closeSelected(ActionEvent ev){
-        System.out.println("close button pressed");
+        //System.out.println("close button pressed");
         Stage theStage = (Stage) menuBar.getScene().getWindow();
         
-        //do a check to see if the file has changed since last save...
-        System.out.println("SavedHash: "+getFileHash());
-        System.out.println("CurrentHash: "+ textPad.getText().hashCode());
+        //DEBUG: do a check to see if the file has changed since last save...
+        //System.out.println("SavedHash: "+getFileHash());
+        //System.out.println("CurrentHash: "+ textPad.getText().hashCode());
         
         if(getFileHash()==textPad.getText().hashCode()){
             System.out.println("Saving is fine");
@@ -352,7 +345,7 @@ public class PredicateLogicPadController implements Initializable {
     
     @FXML
     private void saveAsSelected(ActionEvent ev){
-        System.out.println("saveAs button pressed");
+        //System.out.println("saveAs button pressed");
         boolean saved = saveAs();
     }
     

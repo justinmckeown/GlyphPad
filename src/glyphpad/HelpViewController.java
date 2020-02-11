@@ -70,7 +70,6 @@ public class HelpViewController implements Initializable {
         letters = newBranch("Letter like characters", glyphList);
         subscripts = newBranch("Subscripts", glyphList);
         superscripts = newBranch("Superscripts", glyphList);
-        newBranch("Quick start tutorial", overview);
         
         /*
         
@@ -140,8 +139,6 @@ public class HelpViewController implements Initializable {
                     break;
                 case "Superscripts":
                     setView(helpTextStore.getSuperscripts());
-                    break;
-                case "Quick start tutorial":
                     break;
                 default:
                     System.out.println("Default Case called. input: "+ newValue.getValue());
