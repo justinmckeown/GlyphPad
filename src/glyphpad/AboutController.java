@@ -41,7 +41,7 @@ public class AboutController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         
-        developedBy.setText("Developed by Dr J. McKeown, 2019");
+        developedBy.setText("Developed by J. McKeown, 2019");
         /*
         
         Text txt = new Text("Feedback & comments: ");
