@@ -1,6 +1,6 @@
 # GlyphPad
 
-A mathematics pad for writing propositional logic and basic set theory. Originally created to help Computer Science students who needed something light weight for quickly writing basic equations which would render real time and which coudl be copied and pasted into other text editors. 
+A mathematics pad for writing propositional logic and basic set theory. Originally created to help Computer Science students who needed something light weight for quickly writing basic equations which would render real time and which could be copied and pasted into other text editors. 
 
 ### How it works
 GylphPad allows users to type short-codes which are rendered into mathematical 'glyphs'. Glyphpad currently supports a wide range of symbols commonly used in propositional logic and set theory. It also supports translation of a range of characters into subscript and superscript.
